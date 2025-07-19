@@ -83,19 +83,25 @@ WSGI_APPLICATION = 'main.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+# # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+import dj_database_url
+from decouple import config
 
 DATABASES = {
-    'default': {
-        'ENGINE'    : 'django.db.backends.postgresql',
-        'NAME'      : config('DB_NAME'),
-        'USER'      : config('DB_USER'),
-        'PASSWORD'  : config('DB_PASSWORD'),
-        'HOST'      : config('DB_HOST', default='localhost'),
-        'PORT'      : config('DB_PORT', default='5432'),
-    }
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE'    : 'django.db.backends.postgresql',
+#         'NAME'      : config('DB_NAME'),
+#         'USER'      : config('DB_USER'),
+#         'PASSWORD'  : config('DB_PASSWORD'),
+#         'HOST'      : config('DB_HOST', default='localhost'),
+#         'PORT'      : config('DB_PORT', default='5432'),
+#     }
+# }
 
 
 # Password validation
