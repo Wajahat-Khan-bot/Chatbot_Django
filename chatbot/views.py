@@ -59,7 +59,7 @@ class ChatResponse(APIView):
             )
 
             bot_reply = response["choices"][0]["message"]["content"]
-            return Response({"response": bot_reply}, status=status.HTTP_200_OK)
+            return Response({"response": f"You said:{user_message}"}, status=status.HTTP_200_OK)
 
         except Exception as e:
             print("OpenAI Error:", e)
