@@ -15,10 +15,10 @@ def index(request, identifier):
     try:
         business = Business.objects.get(identifier=identifier, access_token = token)
         print(f"business: {business}")
+        return render(request, "index.html", {"business_id": business})
     except Business.DoesNotExist:
         return HttpResponseForbidden("Invalid business")
     
-    return render(request, "index.html", {"business_id": business})
 
 class ChatResponse(APIView):
     def post(self, request):
