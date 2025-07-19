@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ business_id.name }} - Assistant</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .center-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #chatbox {
+            width: 400px;
+            height: 250px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .message {
+            max-width: 80%;
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 15px;
+            clear: both;
+        }
+
+        .user-message {
+            background-color: #dcf8c6;
+            float: right;
+            text-align: right;
+        }
+
+        .bot-message {
+            background-color: #fff;
+            float: left;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        #userInput {
+            width: 200px;
+            padding: 5px;
+        }
+
+        #sendButton {
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="center-container">
+        <div class="chat-container">
+            <h2>AI Assistant</h2>
+            <div id="chatbox"></div>
+            <div class="input-row">
+                <input type="text" id="userInput" placeholder="Type a message..." />
+                <button id="sendButton">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userInput = document.getElementById("userInput");
+        const sendButton = document.getElementById("sendButton");
+        const chatbox = document.getElementById("chatbox");
+        const businessId = "{{ business_id.identifier }}";
+
+        function sendMessage() {
+            const userMessage = userInput.value.trim();
+            if (userMessage === "") return;
+
+            // Add user message
+            chatbox.innerHTML += `<div class="message user-message"> ${userMessage}</div>`;
+            userInput.value = "";
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            // Fetch bot response
+            fetch("/api/chat_response/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCSRFToken(),    
+                },
+                body: JSON.stringify({ 
+                    message: userMessage,
+                    business_id: businessId
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Add bot message
+                chatbox.innerHTML += `<div class="message bot-message"> ${data.response}</div>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                chatbox.innerHTML += `<div class="message bot-message"> Error occurred.</div>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+            });
+        }
+
+        sendButton.addEventListener("click", sendMessage);
+
+        userInput.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let cookie of cookies) {
+                    const trimmed = cookie.trim();
+                    if (trimmed.startsWith("csrftoken=")) {
+                        cookieValue = decodeURIComponent(trimmed.substring("csrftoken=".length));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>
