@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: chatbot-service
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn chatbot.wsgi:application
+    region: oregon
+    plan: free
+    branch: main
+    autoDeploy: true
