@@ -12,7 +12,7 @@ class BusinessAdmin(admin.ModelAdmin):
 
     def chatbot_url(self,obj):
         base_url = "https://chatbot-django-xnb0.onrender.com/"
-        full_url = f"{base_url}/api/chat/{obj.identifier}/?token={obj.access_token}"
+        full_url = f"{base_url}api/chat/{obj.identifier}/?token={obj.access_token}"
         return format_html(f'<a href="{full_url}" target="_blank">{full_url}</a>')
     
     chatbot_url.short_description = "url"
