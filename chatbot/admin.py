@@ -11,7 +11,7 @@ class BusinessAdmin(admin.ModelAdmin):
     readonly_fields = ('chatbot_url',)
 
     def chatbot_url(self,obj):
-        base_url = "http://127.0.0.1:8000"
+        base_url = "https://chatwise-xnb0.onrender.com/"
         full_url = f"{base_url}/api/chat/{obj.identifier}/?token={obj.access_token}"
         return format_html(f'<a href="{full_url}" target="_blank">{full_url}</a>')
     
